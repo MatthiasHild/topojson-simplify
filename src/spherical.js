@@ -1,5 +1,4 @@
 var pi = Math.PI,
-    tau = 2 * pi,
     quarterPi = pi / 4,
     radians = pi / 180,
     abs = Math.abs,
@@ -7,17 +6,17 @@ var pi = Math.PI,
     cos = Math.cos,
     sin = Math.sin;
 
-function halfArea(ring, closed) {
-  var i = 0,
-      n = ring.length,
-      sum = 0,
-      point = ring[closed ? i++ : n - 1],
+export function sphericalArea(ring) {
+  var n = ring.length;
+  if (n < 3) return 0;
+  var sum = 0,
+      point = ring[n - 1],
       lambda0, lambda1 = point[0] * radians,
       phi1 = (point[1] * radians) / 2 + quarterPi,
       cosPhi0, cosPhi1 = cos(phi1),
       sinPhi0, sinPhi1 = sin(phi1);
 
-  for (; i < n; ++i) {
+  for (var i = 0; i < n; i++) {
     point = ring[i];
     lambda0 = lambda1, lambda1 = point[0] * radians;
     phi1 = (point[1] * radians) / 2 + quarterPi;
@@ -37,15 +36,13 @@ function halfArea(ring, closed) {
     sum += atan2(v, u);
   }
 
-  return sum;
+  return sum * 2;
 }
 
-export function sphericalRingArea(ring, interior) {
-  var sum = halfArea(ring, true);
-  if (interior) sum *= -1;
-  return (sum < 0 ? tau + sum : sum) * 2;
+export function sphericalRingArea(ring) {
+  return abs(sphericalArea(ring));
 }
 
 export function sphericalTriangleArea(t) {
-  return abs(halfArea(t, false)) * 2;
+  return abs(sphericalArea(t));
 }
